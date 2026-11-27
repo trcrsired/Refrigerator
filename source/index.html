@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0e8f8a">
+  <meta name="description" content="A simple offline-first refrigerator and pantry manager with expiry alerts and price-per-kilo sorting.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Fridge">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Fridge · Pantry Manager</title>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand__logo" src="icon-96.png" alt="" width="42" height="42">
+        <div>
+          <h1>Fridge</h1>
+          <p class="brand__sub">Pantry &amp; fridge manager</p>
+        </div>
+      </div>
+      <button id="alertsBtn" class="btn btn--ghost" type="button" aria-live="polite">Enable alerts</button>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="addTitle">
+        <div class="card__head">
+          <h2 id="addTitle">Add item</h2>
+          <span class="hint" id="formHint">Only the essentials — name, amount, price and dates.</span>
+        </div>
+
+        <form id="itemForm" autocomplete="off" novalidate>
+          <label class="field">
+            <span class="field__label">Name</span>
+            <input id="name" type="text" maxlength="80" required placeholder="e.g. Milk" autocomplete="off">
+          </label>
+
+          <div class="grid grid--2">
+            <label class="field">
+              <span class="field__label">Amount</span>
+              <input id="qty" type="number" min="0" step="any" inputmode="decimal" required placeholder="1">
+            </label>
+            <label class="field">
+              <span class="field__label">Unit <small>(SI only)</small></span>
+              <select id="unit" required>
+                <option value="kg" selected>kg — kilogram</option>
+                <option value="g">g — gram</option>
+                <option value="mg">mg — milligram</option>
+                <option value="l">L — litre</option>
+                <option value="ml">mL — millilitre</option>
+                <option value="pcs">pcs — count</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid grid--2">
+            <label class="field">
+              <span class="field__label">Price</span>
+              <input id="price" type="number" min="0" step="any" inputmode="decimal" required placeholder="0.00">
+            </label>
+            <label class="field">
+              <span class="field__label">Currency</span>
+              <select id="currency" required></select>
+            </label>
+          </div>
+
+          <div class="grid grid--2">
+            <label class="field">
+              <span class="field__label">Added <small>ISO 8601 or Unix</small></span>
+              <span class="input-row">
+                <input id="added" type="text" spellcheck="false" required placeholder="2026-01-31T12:00:00Z">
+                <button class="btn btn--mini" type="button" data-stamp="added" title="Set to current time">Now</button>
+              </span>
+            </label>
+            <label class="field">
+              <span class="field__label">Expires <small>ISO 8601 or Unix</small></span>
+              <span class="input-row">
+                <input id="expires" type="text" spellcheck="false" required placeholder="2026-02-07T12:00:00Z">
+                <button class="btn btn--mini" type="button" data-stamp="expires" title="Set to 7 days from now">+7d</button>
+              </span>
+            </label>
+          </div>
+
+          <fieldset class="field fieldset">
+            <legend class="field__label">Storage</legend>
+            <div class="segmented" id="location">
+              <label><input type="radio" name="location" value="fridge" checked><span>Fridge</span></label>
+              <label><input type="radio" name="location" value="freezer"><span>Freezer</span></label>
+              <label><input type="radio" name="location" value="pantry"><span>Pantry</span></label>
+              <label><input type="radio" name="location" value="other"><span>Other</span></label>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button id="submitBtn" class="btn btn--primary" type="submit">Add item</button>
+            <button id="cancelBtn" class="btn btn--ghost is-hidden" type="button">Cancel</button>
+          </div>
+          <p id="formError" class="form-error" role="alert"></p>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="listTitle">
+        <div class="card__head">
+          <h2 id="listTitle">Your items</h2>
+          <span class="hint">Stored on this device only</span>
+        </div>
+
+        <div class="toolbar">
+          <label class="sr-only" for="search">Search items</label>
+          <input id="search" class="input" type="search" placeholder="Search items…">
+
+          <label class="sr-only" for="sort">Sort items</label>
+          <select id="sort" class="input">
+            <option value="ppu-asc">Price / kg · low first</option>
+            <option value="ppu-desc">Price / kg · high first</option>
+            <option value="expiry">Expires soonest</option>
+            <option value="name">Name A–Z</option>
+            <option value="newest">Newest first</option>
+          </select>
+
+          <button id="dateFormatBtn" class="btn btn--chip" type="button" title="Toggle timestamp format">ISO</button>
+        </div>
+
+        <div class="filters" id="filters" role="group" aria-label="Filter by storage">
+          <button class="btn btn--chip is-active" type="button" data-filter="all">All</button>
+          <button class="btn btn--chip" type="button" data-filter="fridge">Fridge</button>
+          <button class="btn btn--chip" type="button" data-filter="freezer">Freezer</button>
+          <button class="btn btn--chip" type="button" data-filter="pantry">Pantry</button>
+          <button class="btn btn--chip" type="button" data-filter="other">Other</button>
+        </div>
+
+        <div class="stats" id="stats"></div>
+        <div class="list" id="list"></div>
+        <p class="footnote">Price / kg uses SI units. Litres and counts are normalised at 1 L ≈ 1 kg for sorting.</p>
+      </section>
+    </main>
+
+    <footer class="footer">Offline-first · no account, no server · data stays on this device · <a href="./help/">Help &amp; units</a></footer>
+  </div>
+
+  <noscript>
+    <p class="noscript">This app needs JavaScript to store and display your items.</p>
+  </noscript>
+  <script defer src="app.js"></script>
+</body>
+</html>

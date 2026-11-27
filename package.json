@@ -1,0 +1,17 @@
+{
+  "name": "fridge-pwa",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline-first refrigerator and pantry PWA. Source in /source, minified app in /docs.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "icons": "python3 scripts/make_icons.py",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "html-minifier-terser": "^7.2.0",
+    "terser": "^5.39.0"
+  }
+}
