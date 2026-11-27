@@ -39,6 +39,7 @@ To deploy on GitHub Pages, publish the `/docs` directory from the `main` branch.
 - **Settings** (`/settings/`) — theme (system / light / dark), language (English / 简体中文 for the whole UI and notifications), and independent profiles that each keep their own items.
 - **Backup & restore** — export every profile, item, setting and screenshot as one JSON file with the File System Access API (with a plain download fallback), and restore from a file the same way. "Share backup" and per-item share use the Web Share API with files, so Bluetooth and other system share targets appear where the OS supports them.
 - **Screenshots** — attach up to 8 compressed images per item, preview/remove them in the form, and open them in a lightbox from the item card.
+- **Take out** — a toggle marks an item as removed from storage. It leaves the normal list, appears under the "Taken out" filter, and opens a warning not to put it back (bacteria risk) with a one-tap **Throw away** action. Taken-out items no longer trigger expiry alerts.
 - **Offline-first** — the service worker precaches the app shell (including Help and Settings), uses network-first for navigation and cache-first for assets, and falls back to the cached page when offline.
 
 ## Notes

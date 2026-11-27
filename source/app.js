@@ -58,6 +58,9 @@
     lightbox: $('#lightbox'),
     lightboxImg: $('#lightboxImg'),
     lightboxClose: $('#lightboxClose'),
+    outModal: $('#outModal'),
+    outDiscard: $('#outDiscard'),
+    outClose: $('#outClose'),
     themeGroup: $('#themeGroup'),
     languageGroup: $('#languageGroup'),
     profileList: $('#profileList'),
@@ -81,6 +84,7 @@
     profiles: [],
     activeProfile: 'default',
     pendingShots: [],
+    outItemId: null,
     lastCheck: 0
   };
 
@@ -325,15 +329,18 @@
 
   function renderStats(items) {
     if (!el.stats) return;
+    var stored = items.filter(function (item) { return !item.takenOut; });
+    var out = items.length - stored.length;
     var now = Date.now();
-    var soon = items.filter(function (item) {
+    var soon = stored.filter(function (item) {
       return item.expiresAt > now && item.expiresAt - now <= 3 * DAY;
     }).length;
-    var expired = items.filter(function (item) { return item.expiresAt <= now; }).length;
+    var expired = stored.filter(function (item) { return item.expiresAt <= now; }).length;
     el.stats.innerHTML =
-      '<div class="stat"><span class="stat__n">' + items.length + '</span><span class="stat__l">' + esc(t('statItems')) + '</span></div>' +
+      '<div class="stat"><span class="stat__n">' + stored.length + '</span><span class="stat__l">' + esc(t('statItems')) + '</span></div>' +
       '<div class="stat stat--warn"><span class="stat__n">' + soon + '</span><span class="stat__l">' + esc(t('statSoon')) + '</span></div>' +
-      '<div class="stat stat--danger"><span class="stat__n">' + expired + '</span><span class="stat__l">' + esc(t('statExpired')) + '</span></div>';
+      '<div class="stat stat--danger"><span class="stat__n">' + expired + '</span><span class="stat__l">' + esc(t('statExpired')) + '</span></div>' +
+      '<div class="stat stat--danger"><span class="stat__n">' + out + '</span><span class="stat__l">' + esc(t('statOut')) + '</span></div>';
   }
 
   function itemHTML(item) {
@@ -351,14 +358,22 @@
           return '<img src="' + esc(src) + '" alt="" data-shot="' + id + '" data-index="' + index + '">';
         }).join('') + '</div>'
       : '';
+    var out = !!item.takenOut;
+    var badge = out
+      ? '<span class="tag out-badge">' + esc(t('takenOut')) + '</span>'
+      : '<span class="tag tag--' + loc + '">' + esc(locationLabel(loc)) + '</span>';
+    var note = out ? '<p class="out-note">' + esc(t('outNotice')) + '</p>' : '';
+    var outButton = out
+      ? ''
+      : '<button class="icon-btn" type="button" data-act="out" data-id="' + id + '" aria-label="' + esc(t('takeOut')) + '" title="' + esc(t('takeOut')) + '">⇥</button>';
+    var deleteLabel = out ? t('throwAway') : t('deleteLabel');
 
-    return '<article class="item' + (exp.expired ? ' item--expired' : '') + '" data-id="' + id + '">' +
+    return '<article class="item' + (exp.expired ? ' item--expired' : '') + (out ? ' item--out' : '') + '" data-id="' + id + '">' +
       '<div class="item__top">' +
         '<div><h3 class="item__name">' + name + '</h3>' +
-          '<div class="tags">' +
-            '<span class="tag tag--' + loc + '">' + esc(locationLabel(loc)) + '</span>' +
+          '<div class="tags">' + badge +
             '<span class="tag">' + esc(item.qty) + ' ' + unit.label + '</span>' +
-          '</div>' +
+          '</div>' + note +
         '</div>' +
         '<div class="item__price"><strong>' + money(item.price, item.currency) + '</strong>' +
           '<span title="Normalised to kilograms for sorting">' + esc(ppuText) + '</span>' +
@@ -371,7 +386,8 @@
         '<span class="item__actions">' +
           '<button class="icon-btn" type="button" data-act="edit" data-id="' + id + '" aria-label="' + esc(t('editLabel')) + '" title="' + esc(t('editLabel')) + '">✎</button>' +
           '<button class="icon-btn" type="button" data-act="share" data-id="' + id + '" aria-label="' + esc(t('shareLabel')) + '" title="' + esc(t('shareLabel')) + '">↗</button>' +
-          '<button class="icon-btn icon-btn--danger" type="button" data-act="del" data-id="' + id + '" aria-label="' + esc(t('deleteLabel')) + '" title="' + esc(t('deleteLabel')) + '">✕</button>' +
+          outButton +
+          '<button class="icon-btn icon-btn--danger" type="button" data-act="del" data-id="' + id + '" aria-label="' + esc(deleteLabel) + '" title="' + esc(deleteLabel) + '">✕</button>' +
         '</span>' +
       '</div>' +
     '</article>';
@@ -381,8 +397,11 @@
     if (!el.list) return;
     var query = state.search.trim().toLowerCase();
     var items = visibleItems().filter(function (item) {
-      return (state.filter === 'all' || item.location === state.filter) &&
-        (!query || String(item.name).toLowerCase().indexOf(query) !== -1);
+      var isOut = !!item.takenOut;
+      var matchesFilter = state.filter === 'out'
+        ? isOut
+        : !isOut && (state.filter === 'all' || item.location === state.filter);
+      return matchesFilter && (!query || String(item.name).toLowerCase().indexOf(query) !== -1);
     });
     items.sort(comparators()[state.sort] || comparators()['ppu-asc']);
     renderStats(visibleItems());
@@ -477,6 +496,32 @@
     el.lightboxImg.removeAttribute('src');
   }
 
+  function closeOutModal() {
+    if (!el.outModal) return;
+    el.outModal.classList.add('is-hidden');
+    state.outItemId = null;
+  }
+
+  function openOutModal(id) {
+    if (!el.outModal) return;
+    state.outItemId = id;
+    el.outModal.classList.remove('is-hidden');
+  }
+
+  async function takeOut(id) {
+    var item = state.items.find(function (entry) { return entry.id === id; });
+    if (!item || item.takenOut) return;
+    item.takenOut = true;
+    item.takenOutAt = Date.now();
+    try {
+      await putItem(item);
+    } catch (e) {
+      return;
+    }
+    await load();
+    openOutModal(id);
+  }
+
   function initLightbox() {
     if (!el.lightbox) return;
     el.lightboxClose.addEventListener('click', closeLightbox);
@@ -484,8 +529,26 @@
       if (event.target === el.lightbox) closeLightbox();
     });
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'Escape') {
+        closeLightbox();
+        closeOutModal();
+      }
     });
+    if (el.outModal) {
+      el.outClose.addEventListener('click', closeOutModal);
+      el.outDiscard.addEventListener('click', async function () {
+        var id = state.outItemId;
+        closeOutModal();
+        if (!id) return;
+        try {
+          await deleteItem(id);
+          await load();
+        } catch (e) { /* ignore */ }
+      });
+      el.outModal.addEventListener('click', function (event) {
+        if (event.target === el.outModal) closeOutModal();
+      });
+    }
   }
 
   /* ---------- main page ---------- */
@@ -658,6 +721,8 @@
       if (button.getAttribute('data-act') === 'del') {
         if (!window.confirm(t('deleteConfirm'))) return;
         deleteItem(id).then(load).catch(function () { /* ignore */ });
+      } else if (button.getAttribute('data-act') === 'out') {
+        takeOut(id);
       } else if (button.getAttribute('data-act') === 'share') {
         var shared = state.items.find(function (entry) { return entry.id === id; });
         if (shared) shareItem(shared);
@@ -704,6 +769,7 @@
     var changed = false;
     for (var i = 0; i < items.length; i++) {
       var item = items[i];
+      if (item.takenOut) continue;
       var lang = item.lang || state.language;
       var title = null;
       var body = null;

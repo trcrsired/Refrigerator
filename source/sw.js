@@ -186,6 +186,7 @@ function checkExpiry() {
       var changed = false;
 
       items.forEach(function (item) {
+        if (item.takenOut) return;
         var flag = null;
         var title = null;
         var body = null;

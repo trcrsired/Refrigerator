@@ -150,6 +150,7 @@
           <button class="btn btn--chip" type="button" data-filter="freezer" data-i18n="freezer">Freezer</button>
           <button class="btn btn--chip" type="button" data-filter="pantry" data-i18n="pantry">Pantry</button>
           <button class="btn btn--chip" type="button" data-filter="other" data-i18n="other">Other</button>
+          <button class="btn btn--chip" type="button" data-filter="out" data-i18n="filterOut">Taken out</button>
         </div>
 
         <div class="stats" id="stats"></div>
@@ -168,6 +169,17 @@
   <div class="lightbox is-hidden" id="lightbox" role="dialog" aria-modal="true">
     <button type="button" id="lightboxClose" aria-label="Close">✕</button>
     <img id="lightboxImg" alt="">
+  </div>
+
+  <div class="lightbox is-hidden" id="outModal" role="dialog" aria-modal="true">
+    <div class="modal-card" role="document">
+      <h2 data-i18n="outWarningTitle">Do not put it back</h2>
+      <p data-i18n="outWarningBody">Once food has been taken out, bacteria can grow quickly. Throw it away — do not return it to the fridge. Try to buy less next time.</p>
+      <div class="modal-actions">
+        <button id="outDiscard" class="btn btn--danger" type="button" data-i18n="throwAway">Throw away</button>
+        <button id="outClose" class="btn btn--ghost" type="button" data-i18n="close">Close</button>
+      </div>
+    </div>
   </div>
 
   <noscript>

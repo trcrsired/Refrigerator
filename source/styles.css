@@ -540,6 +540,37 @@ button:focus-visible {
 
 .data-card p { font-size: .82rem; color: var(--muted); }
 
+/* Taken-out items and warning ----------------------------------------- */
+.btn--danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.item--out { border-color: var(--danger); background: var(--danger-soft); }
+
+.out-badge { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+
+.out-note { color: var(--danger); font-size: .78rem; font-weight: 600; margin-top: 6px; }
+
+.modal-card {
+  width: min(100%, 460px);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: clamp(18px, 3vw, 26px);
+  display: grid;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
+
+.modal-card h2 { font-size: 1.15rem; color: var(--danger); }
+
+.modal-card p { color: var(--text); font-size: .92rem; line-height: 1.55; }
+
+.modal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
