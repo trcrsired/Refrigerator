@@ -23,7 +23,7 @@ npm run icons      # regenerate the PNG icons (requires Pillow)
 
 ### Routing
 
-Following the same convention as `pwa-player` (needed by Cloudflare Pages), every non-root HTML page is emitted as a directory route: `source/help/index.html` → `docs/help/index.html`, served at `/help/`. An HTML file named `xxx.html` would likewise become `docs/xxx/index.html`. Links use directory URLs (`./help/`), and subpages reference assets with `../` so they work both at a domain root and under a subpath. The root `index.html` stays at `docs/index.html`.
+Following the same convention as `pwa-player` (needed by Cloudflare Pages), every non-root HTML page is emitted as a directory route: `source/help/index.html` → `docs/help/index.html` (served at `/help/`), and `source/settings/index.html` → `docs/settings/index.html` (served at `/settings/`). An HTML file named `xxx.html` would likewise become `docs/xxx/index.html`. Links use directory URLs (`./help/`, `./settings/`), and subpages reference assets with `../` plus a `meta[name="app-root"]` hint for the service worker and notification icons, so they work both at a domain root and under a subpath. The root `index.html` stays at `docs/index.html`.
 
 To deploy on GitHub Pages, publish the `/docs` directory from the `main` branch. Service workers require a secure context (HTTPS or localhost).
 
@@ -36,9 +36,12 @@ To deploy on GitHub Pages, publish the `/docs` directory from the `main` branch.
 - **Sorting & filtering** — price/kg ascending (default) or descending, soonest expiry, name, newest; plus free-text search and storage filters.
 - **More than a fridge** — every item has a storage location: Fridge, Freezer, Pantry or Other.
 - **Expiry alerts** — requesting notification permission enables local notifications for items expiring within 24 hours or already expired. Each item notifies once per state. The service worker also registers Periodic Background Sync (`expiry-check`, 12 h) where supported and handles push messages and notification clicks.
-- **Offline-first** — the service worker precaches the app shell, uses network-first for navigation and cache-first for assets, and falls back to the cached page when offline.
+- **Settings** (`/settings/`) — theme (system / light / dark), language (English / 简体中文 for the whole UI and notifications), and independent profiles that each keep their own items.
+- **Backup & restore** — export every profile, item, setting and screenshot as one JSON file with the File System Access API (with a plain download fallback), and restore from a file the same way. "Share backup" and per-item share use the Web Share API with files, so Bluetooth and other system share targets appear where the OS supports them.
+- **Screenshots** — attach up to 8 compressed images per item, preview/remove them in the form, and open them in a lightbox from the item card.
+- **Offline-first** — the service worker precaches the app shell (including Help and Settings), uses network-first for navigation and cache-first for assets, and falls back to the cached page when offline.
 
 ## Notes
 
-- Items are private to the browser profile that added them. Clearing site data removes them.
+- Items are private to this browser and to the selected app profile. Clearing site data removes them, so export a backup first.
 - Notification permission is required and is only requested when you press **Enable alerts**. Background delivery depends on browser/OS support for periodic sync or push.

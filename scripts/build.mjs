@@ -104,7 +104,7 @@ const built = await walk(source);
 
 // Tie the service-worker cache name to the built assets so every deploy refreshes the cache.
 const hash = createHash('sha256');
-for (const file of ['index.html', 'help/index.html', 'styles.css', 'app.js', 'manifest.webmanifest']) {
+for (const file of ['index.html', 'help/index.html', 'settings/index.html', 'styles.css', 'i18n.js', 'app.js', 'sw.js', 'manifest.webmanifest']) {
   hash.update(await readFile(path.join(docs, file)));
   hash.update('\u0000');
 }

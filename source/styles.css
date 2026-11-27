@@ -1,6 +1,6 @@
 /* Fridge PWA — readable source styles. Minified into /docs by scripts/build.mjs */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: #edf4f4;
   --surface: #ffffff;
   --surface-soft: #f5faf9;
@@ -18,8 +18,10 @@
   --radius: 16px;
 }
 
+/* "System" follows the OS unless light was forced explicitly. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --bg: #091316;
     --surface: #122326;
     --surface-soft: #182c30;
@@ -35,6 +37,25 @@
     --danger-soft: #3b1c19;
     --shadow: 0 8px 30px rgba(0, 0, 0, .28);
   }
+}
+
+/* Explicit dark override. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #091316;
+  --surface: #122326;
+  --surface-soft: #182c30;
+  --text: #e7f2f1;
+  --muted: #9eb8ba;
+  --line: #284247;
+  --accent: #35c5bd;
+  --accent-dark: #7ee0d8;
+  --accent-soft: #143b3a;
+  --warn: #ffc266;
+  --warn-soft: #3a2a12;
+  --danger: #ff9b8f;
+  --danger-soft: #3b1c19;
+  --shadow: 0 8px 30px rgba(0, 0, 0, .28);
 }
 
 *,
@@ -83,6 +104,8 @@ h1, h2, h3, p { margin: 0; }
   flex-wrap: wrap;
   margin-bottom: 18px;
 }
+
+.head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .brand { display: flex; align-items: center; gap: 12px; }
 
@@ -405,6 +428,117 @@ button:focus-visible {
   .muted { margin-left: 0; }
   .item__foot { justify-content: flex-start; }
 }
+
+/* Screenshots and lightbox --------------------------------------------- */
+.shots { display: grid; gap: 8px; }
+
+.shots__grid, .item__shots { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.shot {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.shot img, .item__shots img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: zoom-in;
+}
+
+.item__shots img { width: 52px; height: 52px; border: 1px solid var(--line); border-radius: 8px; }
+
+.shot button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .65);
+  color: #fff;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, .88);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.lightbox button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 60;
+  background: var(--text);
+  color: var(--surface);
+  padding: 10px 16px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: .85rem;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+
+/* Settings ------------------------------------------------------------- */
+.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+
+.settings-list { display: grid; gap: 8px; }
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}
+
+.profile-row__name { flex: 1 1 140px; font-weight: 600; overflow-wrap: anywhere; }
+
+.profile-row__active { font-size: .7rem; font-weight: 700; color: var(--accent-dark); }
+
+.btn--row { min-height: 38px; padding: 6px 12px; font-size: .82rem; }
+
+.data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+
+.data-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+
+.data-card h3 { font-size: .95rem; }
+
+.data-card p { font-size: .82rem; color: var(--muted); }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

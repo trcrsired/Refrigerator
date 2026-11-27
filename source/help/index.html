@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0e8f8a">
   <meta name="description" content="Help for the Fridge pantry manager: units, dates, price per kilo and expiry alerts.">
+  <meta name="app-root" content="../">
   <link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+  <script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('fridge.settings')||'{}').theme||'system'}catch(e){}</script>
   <link rel="stylesheet" href="../styles.css">
   <style>
     .help { display: grid; gap: 14px; }
@@ -25,47 +27,49 @@
       <div class="brand">
         <img class="brand__logo" src="../icon-96.png" alt="" width="42" height="42">
         <div>
-          <h1>Help</h1>
-          <p class="brand__sub">Using Fridge</p>
+          <h1 data-i18n="helpTitle">Help</h1>
+          <p class="brand__sub" data-i18n="helpSub">Using Fridge</p>
         </div>
       </div>
-      <a class="btn btn--ghost" href="../">Back to items</a>
+      <a class="btn btn--ghost" href="../" data-i18n="backToItems">Back to items</a>
     </header>
 
     <main class="help">
       <section class="card">
-        <h2>Quick add</h2>
-        <p>Enter a name, an amount with an SI unit, a price with a currency, and when it was added and expires. The two date fields start at the current time; expiry starts at 7 days. Use <strong>Now</strong> and <strong>+7d</strong> to reset them.</p>
+        <h2 data-i18n="helpQuickTitle">Quick add</h2>
+        <p data-i18n="helpQuickText">Enter a name, an amount with an SI unit, a price with a currency, and when it was added and expires. The two date fields start at the current time; expiry starts at 7 days. Use the Now and +7d buttons to reset them.</p>
       </section>
 
       <section class="card">
-        <h2>Dates</h2>
-        <p>Both dates accept either an ISO 8601 timestamp (for example <code>2026-11-27T12:00:00Z</code>) or a Unix timestamp in seconds or milliseconds. The <strong>ISO</strong>/<strong>UNIX</strong> button switches the format used for input and display.</p>
+        <h2 data-i18n="helpDatesTitle">Dates</h2>
+        <p data-i18n="helpDatesText">Both dates accept either an ISO 8601 timestamp (for example 2026-11-27T12:00:00Z) or a Unix timestamp in seconds or milliseconds. The ISO/UNIX button switches the format used for input and display.</p>
       </section>
 
       <section class="card">
-        <h2>Units and price per kilo</h2>
-        <p>Only SI units are offered. Litres and counts are normalised at 1 L ≈ 1 kg so everything can share one price/kg sorting scale.</p>
+        <h2 data-i18n="helpUnitsTitle">Units and price per kilo</h2>
+        <p data-i18n="helpUnitsText">Only SI units are offered. Litres and counts are normalised at 1 L ≈ 1 kg so everything can share one price/kg sorting scale.</p>
         <table>
-          <thead><tr><th>Unit</th><th>Meaning</th><th>Normalised to kg</th></tr></thead>
+          <thead><tr><th data-i18n="tableUnit">Unit</th><th data-i18n="tableMeaning">Meaning</th><th data-i18n="tableNormalized">Normalised to kg</th></tr></thead>
           <tbody>
-            <tr><td>kg</td><td>kilogram</td><td>1</td></tr>
-            <tr><td>g</td><td>gram</td><td>0.001</td></tr>
-            <tr><td>mg</td><td>milligram</td><td>0.000001</td></tr>
-            <tr><td>L</td><td>litre</td><td>1 (water approximation)</td></tr>
-            <tr><td>mL</td><td>millilitre</td><td>0.001 (water approximation)</td></tr>
-            <tr><td>pcs</td><td>count (dimensionless)</td><td>1</td></tr>
+            <tr><td>kg</td><td data-i18n="kg">kilogram</td><td>1</td></tr>
+            <tr><td>g</td><td data-i18n="g">gram</td><td>0.001</td></tr>
+            <tr><td>mg</td><td data-i18n="mg">milligram</td><td>0.000001</td></tr>
+            <tr><td>L</td><td data-i18n="litre">litre</td><td data-i18n="waterApprox">1 (water approximation)</td></tr>
+            <tr><td>mL</td><td data-i18n="millilitre">millilitre</td><td data-i18n="waterApproxMl">0.001 (water approximation)</td></tr>
+            <tr><td>pcs</td><td data-i18n="count">count (dimensionless)</td><td>1</td></tr>
           </tbody>
         </table>
       </section>
 
       <section class="card">
-        <h2>Storage and alerts</h2>
-        <p>Items can be in the <strong>Fridge</strong>, <strong>Freezer</strong>, <strong>Pantry</strong> or <strong>Other</strong> — anything can be tracked, not just chilled food. Press <strong>Enable alerts</strong> to get notifications for items expiring within 24 hours or already expired. Notifications and offline caching depend on your browser's support.</p>
+        <h2 data-i18n="helpStorageTitle">Storage and alerts</h2>
+        <p data-i18n="helpStorageText">Items can be in the Fridge, Freezer, Pantry or Other — anything can be tracked, not just chilled food. Press Enable alerts to get notifications for items expiring within 24 hours or already expired. Notifications and offline caching depend on your browser's support.</p>
       </section>
     </main>
 
-    <footer class="footer">Offline-first · data stays on this device · <a href="../">Back to items</a></footer>
+    <footer class="footer"><a href="../" data-i18n="backToItems">Back to items</a></footer>
   </div>
+  <script defer src="../i18n.js"></script>
+  <script defer src="../app.js"></script>
 </body>
 </html>

@@ -4,6 +4,20 @@
  */
 'use strict';
 
+importScripts('./i18n.js');
+
+function tr(lang, key, vars) {
+  var bundle = globalThis.FRIDGE_I18N || {};
+  var dict = bundle[lang] || bundle.en || {};
+  var text = dict[key] != null ? dict[key] : ((bundle.en && bundle.en[key]) || key);
+  if (vars) {
+    Object.keys(vars).forEach(function (name) {
+      text = String(text).split('{' + name + '}').join(String(vars[name]));
+    });
+  }
+  return text;
+}
+
 var CACHE = 'fridge-v1';
 var DAY = 86400000;
 var SCOPE = self.registration.scope;
@@ -12,7 +26,10 @@ var ASSETS = [
   './index.html',
   './help/',
   './help/index.html',
+  './settings/',
+  './settings/index.html',
   './styles.css',
+  './i18n.js',
   './app.js',
   './manifest.webmanifest',
   './icon-192.png',
@@ -173,14 +190,15 @@ function checkExpiry() {
         var title = null;
         var body = null;
 
+        var lang = item.lang || 'en';
         if (item.expiresAt <= now && !item.notifiedExpired) {
           flag = 'notifiedExpired';
-          title = 'Expired: ' + item.name;
-          body = 'Was due ' + new Date(item.expiresAt).toISOString();
+          title = tr(lang, 'notifExpiredTitle', { name: item.name });
+          body = tr(lang, 'notifWasDue', { date: new Date(item.expiresAt).toISOString() });
         } else if (item.expiresAt > now && item.expiresAt - now <= DAY && !item.notifiedSoon) {
           flag = 'notifiedSoon';
-          title = 'Expiring soon: ' + item.name;
-          body = 'Expires ' + new Date(item.expiresAt).toISOString();
+          title = tr(lang, 'notifSoonTitle', { name: item.name });
+          body = tr(lang, 'notifExpires', { date: new Date(item.expiresAt).toISOString() });
         }
 
         if (flag) {

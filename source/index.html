@@ -7,9 +7,11 @@
   <meta name="description" content="A simple offline-first refrigerator and pantry manager with expiry alerts and price-per-kilo sorting.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Fridge">
+  <meta name="app-root" content="./">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-180.png">
+  <script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('fridge.settings')||'{}').theme||'system'}catch(e){}</script>
   <link rel="stylesheet" href="styles.css">
   <title>Fridge · Pantry Manager</title>
 </head>
@@ -20,32 +22,35 @@
         <img class="brand__logo" src="icon-96.png" alt="" width="42" height="42">
         <div>
           <h1>Fridge</h1>
-          <p class="brand__sub">Pantry &amp; fridge manager</p>
+          <p class="brand__sub" data-i18n="brandSub">Pantry &amp; fridge manager</p>
         </div>
       </div>
-      <button id="alertsBtn" class="btn btn--ghost" type="button" aria-live="polite">Enable alerts</button>
+      <div class="head-actions">
+        <a class="btn btn--ghost" href="./settings/" data-i18n="settingsLink">Settings</a>
+        <button id="alertsBtn" class="btn btn--ghost" type="button" aria-live="polite" data-i18n="enableAlerts">Enable alerts</button>
+      </div>
     </header>
 
     <main>
       <section class="card" aria-labelledby="addTitle">
         <div class="card__head">
-          <h2 id="addTitle">Add item</h2>
-          <span class="hint" id="formHint">Only the essentials — name, amount, price and dates.</span>
+          <h2 id="addTitle" data-i18n="addTitle">Add item</h2>
+          <span class="hint" id="formHint" data-i18n="formHint">Only the essentials — name, amount, price and dates.</span>
         </div>
 
         <form id="itemForm" autocomplete="off" novalidate>
           <label class="field">
-            <span class="field__label">Name</span>
+            <span class="field__label" data-i18n="name">Name</span>
             <input id="name" type="text" maxlength="80" required placeholder="e.g. Milk" autocomplete="off">
           </label>
 
           <div class="grid grid--2">
             <label class="field">
-              <span class="field__label">Amount</span>
+              <span class="field__label" data-i18n="amount">Amount</span>
               <input id="qty" type="number" min="0" step="any" inputmode="decimal" required placeholder="1">
             </label>
             <label class="field">
-              <span class="field__label">Unit <small>(SI only)</small></span>
+              <span class="field__label"><span data-i18n="unitSi">Unit (SI only)</span></span>
               <select id="unit" required>
                 <option value="kg" selected>kg — kilogram</option>
                 <option value="g">g — gram</option>
@@ -59,45 +64,59 @@
 
           <div class="grid grid--2">
             <label class="field">
-              <span class="field__label">Price</span>
+              <span class="field__label" data-i18n="price">Price</span>
               <input id="price" type="number" min="0" step="any" inputmode="decimal" required placeholder="0.00">
             </label>
             <label class="field">
-              <span class="field__label">Currency</span>
+              <span class="field__label" data-i18n="currency">Currency</span>
               <select id="currency" required></select>
             </label>
           </div>
 
           <div class="grid grid--2">
             <label class="field">
-              <span class="field__label">Added <small>ISO 8601 or Unix</small></span>
+              <span class="field__label"><span data-i18n="added">Added</span> <small data-i18n="isoUnix">ISO 8601 or Unix</small></span>
               <span class="input-row">
                 <input id="added" type="text" spellcheck="false" required placeholder="2026-01-31T12:00:00Z">
-                <button class="btn btn--mini" type="button" data-stamp="added" title="Set to current time">Now</button>
+                <button class="btn btn--mini" type="button" data-stamp="added" title="Now">Now</button>
               </span>
             </label>
             <label class="field">
-              <span class="field__label">Expires <small>ISO 8601 or Unix</small></span>
+              <span class="field__label"><span data-i18n="expires">Expires</span> <small data-i18n="isoUnix">ISO 8601 or Unix</small></span>
               <span class="input-row">
                 <input id="expires" type="text" spellcheck="false" required placeholder="2026-02-07T12:00:00Z">
-                <button class="btn btn--mini" type="button" data-stamp="expires" title="Set to 7 days from now">+7d</button>
+                <button class="btn btn--mini" type="button" data-stamp="expires" title="+7d">+7d</button>
               </span>
             </label>
           </div>
 
           <fieldset class="field fieldset">
-            <legend class="field__label">Storage</legend>
+            <legend class="field__label" data-i18n="storage">Storage</legend>
             <div class="segmented" id="location">
-              <label><input type="radio" name="location" value="fridge" checked><span>Fridge</span></label>
-              <label><input type="radio" name="location" value="freezer"><span>Freezer</span></label>
-              <label><input type="radio" name="location" value="pantry"><span>Pantry</span></label>
-              <label><input type="radio" name="location" value="other"><span>Other</span></label>
+              <label><input type="radio" name="location" value="fridge" checked><span data-i18n="fridge">Fridge</span></label>
+              <label><input type="radio" name="location" value="freezer"><span data-i18n="freezer">Freezer</span></label>
+              <label><input type="radio" name="location" value="pantry"><span data-i18n="pantry">Pantry</span></label>
+              <label><input type="radio" name="location" value="other"><span data-i18n="other">Other</span></label>
             </div>
           </fieldset>
 
+          <div class="field" id="profileField">
+            <span class="field__label" data-i18n="profile">Profile</span>
+            <select id="profileSelect"></select>
+          </div>
+
+          <div class="field">
+            <span class="field__label"><span data-i18n="screenshots">Screenshots</span> <small data-i18n="optional">optional</small></span>
+            <div class="shots">
+              <button class="btn btn--ghost" type="button" id="addShot" data-i18n="addScreenshot">Add screenshot</button>
+              <input type="file" id="shotInput" accept="image/*" multiple hidden>
+              <div class="shots__grid" id="shotPreviews"></div>
+            </div>
+          </div>
+
           <div class="form-actions">
-            <button id="submitBtn" class="btn btn--primary" type="submit">Add item</button>
-            <button id="cancelBtn" class="btn btn--ghost is-hidden" type="button">Cancel</button>
+            <button id="submitBtn" class="btn btn--primary" type="submit" data-i18n="addItem">Add item</button>
+            <button id="cancelBtn" class="btn btn--ghost is-hidden" type="button" data-i18n="cancel">Cancel</button>
           </div>
           <p id="formError" class="form-error" role="alert"></p>
         </form>
@@ -105,46 +124,56 @@
 
       <section class="card" aria-labelledby="listTitle">
         <div class="card__head">
-          <h2 id="listTitle">Your items</h2>
-          <span class="hint">Stored on this device only</span>
+          <h2 id="listTitle" data-i18n="yourItems">Your items</h2>
+          <span class="hint" data-i18n="storedLocally">Stored on this device only</span>
         </div>
 
         <div class="toolbar">
-          <label class="sr-only" for="search">Search items</label>
-          <input id="search" class="input" type="search" placeholder="Search items…">
+          <label class="sr-only" for="search">Search</label>
+          <input id="search" class="input" type="search" placeholder="Search items…" data-i18n-placeholder="searchPlaceholder">
 
-          <label class="sr-only" for="sort">Sort items</label>
+          <label class="sr-only" for="sort">Sort by</label>
           <select id="sort" class="input">
-            <option value="ppu-asc">Price / kg · low first</option>
-            <option value="ppu-desc">Price / kg · high first</option>
-            <option value="expiry">Expires soonest</option>
-            <option value="name">Name A–Z</option>
-            <option value="newest">Newest first</option>
+            <option value="ppu-asc" data-i18n="sortPpuAsc">Price / kg · low first</option>
+            <option value="ppu-desc" data-i18n="sortPpuDesc">Price / kg · high first</option>
+            <option value="expiry" data-i18n="sortExpiry">Expires soonest</option>
+            <option value="name" data-i18n="sortName">Name A–Z</option>
+            <option value="newest" data-i18n="sortNewest">Newest first</option>
           </select>
 
-          <button id="dateFormatBtn" class="btn btn--chip" type="button" title="Toggle timestamp format">ISO</button>
+          <button id="dateFormatBtn" class="btn btn--chip" type="button" title="ISO" data-i18n-title="dateFormatTitle">ISO</button>
         </div>
 
         <div class="filters" id="filters" role="group" aria-label="Filter by storage">
-          <button class="btn btn--chip is-active" type="button" data-filter="all">All</button>
-          <button class="btn btn--chip" type="button" data-filter="fridge">Fridge</button>
-          <button class="btn btn--chip" type="button" data-filter="freezer">Freezer</button>
-          <button class="btn btn--chip" type="button" data-filter="pantry">Pantry</button>
-          <button class="btn btn--chip" type="button" data-filter="other">Other</button>
+          <button class="btn btn--chip is-active" type="button" data-filter="all" data-i18n="filterAll">All</button>
+          <button class="btn btn--chip" type="button" data-filter="fridge" data-i18n="fridge">Fridge</button>
+          <button class="btn btn--chip" type="button" data-filter="freezer" data-i18n="freezer">Freezer</button>
+          <button class="btn btn--chip" type="button" data-filter="pantry" data-i18n="pantry">Pantry</button>
+          <button class="btn btn--chip" type="button" data-filter="other" data-i18n="other">Other</button>
         </div>
 
         <div class="stats" id="stats"></div>
         <div class="list" id="list"></div>
-        <p class="footnote">Price / kg uses SI units. Litres and counts are normalised at 1 L ≈ 1 kg for sorting.</p>
+        <p class="footnote" data-i18n="footnote">Price / kg uses SI units. Litres and counts are normalised at 1 L ≈ 1 kg for sorting.</p>
       </section>
     </main>
 
-    <footer class="footer">Offline-first · no account, no server · data stays on this device · <a href="./help/">Help &amp; units</a></footer>
+    <footer class="footer">
+      <span data-i18n="footerText">Offline-first · no account, no server · data stays on this device</span> ·
+      <a href="./help/" data-i18n="helpLink">Help &amp; units</a> ·
+      <a href="./settings/" data-i18n="settingsLink">Settings</a>
+    </footer>
+  </div>
+
+  <div class="lightbox is-hidden" id="lightbox" role="dialog" aria-modal="true">
+    <button type="button" id="lightboxClose" aria-label="Close">✕</button>
+    <img id="lightboxImg" alt="">
   </div>
 
   <noscript>
     <p class="noscript">This app needs JavaScript to store and display your items.</p>
   </noscript>
+  <script defer src="i18n.js"></script>
   <script defer src="app.js"></script>
 </body>
 </html>

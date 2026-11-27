@@ -24,6 +24,13 @@
       "description": "Jump straight to adding a new item.",
       "url": "./?add=1",
       "icons": [{ "src": "icon-96.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Settings",
+      "short_name": "Settings",
+      "description": "Theme, language, profiles and backup.",
+      "url": "./settings/",
+      "icons": [{ "src": "icon-96.png", "sizes": "96x96", "type": "image/png" }]
     }
   ]
 }

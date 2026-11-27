@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0e8f8a">
+  <meta name="description" content="Fridge settings: theme, language, profiles and data backup.">
+  <meta name="app-root" content="../">
+  <link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+  <script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem('fridge.settings')||'{}').theme||'system'}catch(e){}</script>
+  <link rel="stylesheet" href="../styles.css">
+  <title>Settings · Fridge</title>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand__logo" src="../icon-96.png" alt="" width="42" height="42">
+        <div>
+          <h1 data-i18n="settingsTitle">Settings</h1>
+          <p class="brand__sub" data-i18n="settingsSub">Appearance, language, profiles and data</p>
+        </div>
+      </div>
+      <a class="btn btn--ghost" href="../" data-i18n="backToItems">Back to items</a>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="appearanceTitle">
+        <div class="card__head"><h2 id="appearanceTitle" data-i18n="appearance">Appearance</h2></div>
+        <div class="field">
+          <span class="field__label" data-i18n="theme">Theme</span>
+          <div class="segmented" id="themeGroup">
+            <label><input type="radio" name="theme" value="system" checked><span data-i18n="themeSystem">System</span></label>
+            <label><input type="radio" name="theme" value="light"><span data-i18n="themeLight">Light</span></label>
+            <label><input type="radio" name="theme" value="dark"><span data-i18n="themeDark">Dark</span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="languageTitle">
+        <div class="card__head"><h2 id="languageTitle" data-i18n="language">Language</h2></div>
+        <div class="field">
+          <span class="field__label" data-i18n="languageHint">English and 简体中文</span>
+          <div class="segmented" id="languageGroup">
+            <label><input type="radio" name="language" value="en" checked><span>English</span></label>
+            <label><input type="radio" name="language" value="zh"><span>简体中文</span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="profilesTitle">
+        <div class="card__head"><h2 id="profilesTitle" data-i18n="profiles">Profiles</h2></div>
+        <div class="settings-list" id="profileList"></div>
+        <div class="input-row">
+          <input id="newProfile" type="text" maxlength="40" placeholder="Profile name" data-i18n-placeholder="profileNamePlaceholder">
+          <button id="addProfile" class="btn btn--primary" type="button" data-i18n="addProfile">Add profile</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="dataTitle">
+        <div class="card__head"><h2 id="dataTitle" data-i18n="data">Your data</h2></div>
+        <div class="data-grid">
+          <div class="data-card">
+            <h3 data-i18n="exportTitle">Export everything</h3>
+            <p data-i18n="exportHint">Save all profiles, items, settings and screenshots as one JSON file.</p>
+            <button id="exportBtn" class="btn btn--ghost" type="button" data-i18n="exportBtn">Export</button>
+          </div>
+          <div class="data-card">
+            <h3 data-i18n="importTitle">Restore from a file</h3>
+            <p data-i18n="importHint">Replace the current data with a previously exported JSON file.</p>
+            <button id="importBtn" class="btn btn--ghost" type="button" data-i18n="importBtn">Restore</button>
+            <input id="importFile" type="file" accept="application/json,.json" hidden>
+          </div>
+          <div class="data-card">
+            <h3 data-i18n="shareTitle">Share / send</h3>
+            <p data-i18n="shareHint">Send the backup through the system share sheet, including Bluetooth targets where supported.</p>
+            <button id="shareBtn" class="btn btn--ghost" type="button" data-i18n="shareBtn">Share backup</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="aboutTitle">
+        <div class="card__head"><h2 id="aboutTitle" data-i18n="aboutTitle">About</h2></div>
+        <p data-i18n="aboutText">Fridge stores everything locally on this device. Export a backup regularly if the data matters to you.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a href="../" data-i18n="backToItems">Back to items</a>
+    </footer>
+  </div>
+  <script defer src="../i18n.js"></script>
+  <script defer src="../app.js"></script>
+</body>
+</html>
